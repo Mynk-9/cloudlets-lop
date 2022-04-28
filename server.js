@@ -15,15 +15,10 @@ io.on('connection', socket => {
     });
     socket.on('storage_info', data => {
         console.log('got storage info', data);
+        if (data.state === 'HIG') {
+            socket.emit('send the data!!');
+        }
     });
-
-    // let intervalId = setInterval(() => {
-    //     if (!socket) return;
-
-    //     console.log('Sending storage info request');
-    //     socket.emit('storage_info');
-    // }, 1000);
-    // intervals.push(intervalId);
 });
 
 process.on('exit', () => {
