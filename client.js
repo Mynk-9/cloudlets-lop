@@ -1,6 +1,7 @@
 require('dotenv').config();
 const io = require('socket.io-client');
 const diskUsage = require('check-disk-space').default;
+const fs = require('fs');
 
 const SERVER = process.env.SERVER;
 const PORT = process.env.PORT || 3000;
@@ -24,8 +25,17 @@ socket.on('storage_info', () => {
     });
 });
 
-socket.on('send_data', param => {
-    console.log('server requesting data', param);
+socket.on('high_storage_send_data', () => {
+    // console.log('server requesting data');
+    const fileName = 'big-dummy-data.txt';
+    fs.readFile('./assets/big-dummy-data.txt', (err, buff) => {
+        if (err) {
+            console.log('file not found');
+            return;
+        }
+
+        socket.emit('high_storage_send_data', { name: fileName, data: buff });
+    });
 });
 
 setInterval(() => {

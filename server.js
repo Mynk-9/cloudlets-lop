@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Server } = require('socket.io');
+const fs = require('fs');
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,9 +16,10 @@ io.on('connection', socket => {
     });
     socket.on('storage_info', data => {
         console.log('got storage info', data);
-        if (data.state === 'HIG') {
-            socket.emit('send_data', 'send the data!!');
-        }
+        if (data.state === 'HIG') socket.emit('high_storage_send_data');
+    });
+    socket.on('high_storage_send_data', data => {
+        fs.writeFile(__dirname + `/${data.fileName}`, data.buff);
     });
 });
 
