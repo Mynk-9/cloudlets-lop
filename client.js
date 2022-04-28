@@ -28,7 +28,7 @@ socket.on('storage_info', () => {
 socket.on('high_storage_send_data', () => {
     // console.log('server requesting data');
     const fileName = 'sent-big-dummy-data.txt';
-    fs.readFile('./assets/big-dummy-data.txt', (err, buff) => {
+    fs.readFile('./assets/dummy-data.txt', (err, buff) => {
         if (err) {
             console.log('file not found');
             return;
