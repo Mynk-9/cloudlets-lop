@@ -63,33 +63,37 @@ socket.on('storage_info', () => {
 socket.on('high_storage_send_data', () => {
     // console.log('server requesting data');
     const fileName = 'sent-big-dummy-data.txt';
-    fs.readFile('./assets/dummy-data.txt', (err, buff) => {
-        if (err) {
-            console.log('file not found');
-            return;
-        }
-        console.log('Data read successful');
-        socket.emit('high_storage_send_data', {
-            fileName: fileName,
-            data: buff,
-        });
+    // fs.readFile('./assets/dummy-data.txt', (err, buff) => {
+    //     if (err) {
+    //         console.log('file not found');
+    //         return;
+    //     }
+    //     console.log('Data read successful');
+    //     socket.emit('high_storage_send_data', {
+    //         fileName: fileName,
+    //         data: buff,
+    //     });
+    // });
+    socket.emit('high_storage_send_data', {
+        fileName: fileName,
+        data: 'buff',
     });
 });
 
 socket.on('receive_data', data => {
     console.log(`saving data to file`, data.fileName);
-    fs.writeFile(
-        __dirname + `/${data.fileName}`,
-        new Buffer.from(data.data),
-        err => {
-            if (err) {
-                console.log('Error in writing file');
-                return;
-            }
+    // fs.writeFile(
+    //     __dirname + `/${data.fileName}`,
+    //     new Buffer.from(data.data),
+    //     err => {
+    //         if (err) {
+    //             console.log('Error in writing file');
+    //             return;
+    //         }
 
-            console.log('Successfully saved file.', data.fileName);
-        }
-    );
+    //         console.log('Successfully saved file.', data.fileName);
+    //     }
+    // );
 });
 
 setInterval(() => {

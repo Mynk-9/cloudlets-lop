@@ -9,6 +9,7 @@ const io = new Server(PORT);
 let intervals = [];
 let clients = {};
 let dataQueue = [];
+let clientReceiveCounter = 0;
 const checkLowStorageUsageClients = () => {
     let lowStorageUsageClients = [];
     for (const clientId in clients) {
@@ -43,6 +44,9 @@ io.on('connection', socket => {
         };
     });
     socket.on('high_storage_send_data', data => {
+        // console.log('receive count:', ++clientReceiveCounter);
+        clientReceiveCounter++;
+
         let lowestStorageClient = null;
         let lowestStorageRatio = 1;
         for (const clientId in clients) {
@@ -84,3 +88,10 @@ io.on('connection', socket => {
 process.on('exit', () => {
     intervals.forEach(interval => clearInterval(interval));
 });
+
+// testing interval for process
+setTimeout(() => {
+    console.log('receive count:', clientReceiveCounter);
+    io.close();
+    process.exit();
+}, 60 * 1000);
