@@ -7,31 +7,52 @@ const PORT = process.env.PORT || 3000;
 const io = new Server(PORT);
 
 let intervals = [];
+let clients = {};
 
 io.on('connection', socket => {
-    console.log('a user connected');
+    console.log('user connected', socket.id);
+    clients[socket.id] = {};
 
-    socket.on('handshake', data => {
-        console.log(`handshake with ${data}`);
-    });
     socket.on('storage_info', data => {
-        if (data.state === 'HIG') console.log('got storage info', data);
-        if (data.state === 'HIG') socket.emit('high_storage_send_data');
+        // console.log(
+        //     'storage info update for',
+        //     socket.id,
+        //     'status:',
+        //     data.state
+        // );
+        if (data.state === 'HIG') {
+            console.log('HIG storage usage in ', socket.id);
+            socket.emit('high_storage_send_data');
+        }
+        clients[socket.id] = {
+            storageState: data.state,
+            storageRatio: data.ratio,
+            socket: socket,
+        };
     });
     socket.on('high_storage_send_data', data => {
-        console.log(data);
-        fs.writeFile(
-            __dirname + `/${data.fileName}`,
-            new Buffer.from(data.data),
-            err => {
-                if (err) {
-                    console.log('Error in writing file');
-                    return;
-                }
-
-                console.log('Successfully saved file.');
+        let lowestStorageClient = null;
+        let lowestStorageRatio = 1;
+        for (const clientId in clients) {
+            const ratio = clients[clientId].storageRatio;
+            if (ratio != null && ratio < lowestStorageRatio) {
+                lowestStorageRatio = ratio;
+                lowestStorageClient = clientId;
             }
-        );
+        }
+        if (lowestStorageClient === null) {
+            console.log('Error: no information on client storage available');
+        } else if (clients[lowestStorageClient].storageState === 'HIG') {
+            console.log('Error: no client with LOW or MID storage available');
+        } else {
+            console.log(
+                'Transferring files from',
+                socket.id,
+                'to',
+                lowestStorageClient
+            );
+            clients[lowestStorageClient].socket.emit('receive_data', data);
+        }
     });
 });
 
