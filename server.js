@@ -19,7 +19,14 @@ io.on('connection', socket => {
         if (data.state === 'HIG') socket.emit('high_storage_send_data');
     });
     socket.on('high_storage_send_data', data => {
-        fs.writeFile(__dirname + `/${data.fileName}`, data.buff);
+        fs.writeFile(__dirname + `/${data.fileName}`, data.buff, err => {
+            if (err) {
+                console.log('Error in writing file');
+                return;
+            }
+
+            console.log('SUccessfully saved file.');
+        });
     });
 });
 

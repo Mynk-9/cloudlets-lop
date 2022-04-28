@@ -27,13 +27,13 @@ socket.on('storage_info', () => {
 
 socket.on('high_storage_send_data', () => {
     // console.log('server requesting data');
-    const fileName = 'big-dummy-data.txt';
+    const fileName = 'sent-big-dummy-data.txt';
     fs.readFile('./assets/big-dummy-data.txt', (err, buff) => {
         if (err) {
             console.log('file not found');
             return;
         }
-
+        console.log('Data read successful');
         socket.emit('high_storage_send_data', { name: fileName, data: buff });
     });
 });
