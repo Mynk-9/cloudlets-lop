@@ -16,7 +16,7 @@ io.on('connection', socket => {
     socket.on('storage_info', data => {
         console.log('got storage info', data);
         if (data.state === 'HIG') {
-            socket.emit('send the data!!');
+            socket.emit('send_data', 'send the data!!');
         }
     });
 });
