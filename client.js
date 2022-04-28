@@ -34,7 +34,10 @@ socket.on('high_storage_send_data', () => {
             return;
         }
         console.log('Data read successful');
-        socket.emit('high_storage_send_data', { name: fileName, data: buff });
+        socket.emit('high_storage_send_data', {
+            fileName: fileName,
+            data: buff,
+        });
     });
 });
 
@@ -69,4 +72,4 @@ setInterval(() => {
             });
         }
     });
-}, 2000);
+}, process.env.DISKPOLLINTERVAL);

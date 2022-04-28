@@ -15,18 +15,23 @@ io.on('connection', socket => {
         console.log(`handshake with ${data}`);
     });
     socket.on('storage_info', data => {
-        console.log('got storage info', data);
+        if (data.state === 'HIG') console.log('got storage info', data);
         if (data.state === 'HIG') socket.emit('high_storage_send_data');
     });
     socket.on('high_storage_send_data', data => {
-        fs.writeFile(__dirname + `/${data.fileName}`, data.buff, err => {
-            if (err) {
-                console.log('Error in writing file');
-                return;
-            }
+        console.log(data);
+        fs.writeFile(
+            __dirname + `/${data.fileName}`,
+            new Buffer.from(data.data),
+            err => {
+                if (err) {
+                    console.log('Error in writing file');
+                    return;
+                }
 
-            console.log('SUccessfully saved file.');
-        });
+                console.log('Successfully saved file.');
+            }
+        );
     });
 });
 
